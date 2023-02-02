@@ -10,7 +10,7 @@ https://docs.docker.com/get-started/overview/
 clone the repository
 
 ```
-
+https://github.com/jiangyuan0708/zipcode-weather-app.git
 ```
 
 builder the docer image for two services
