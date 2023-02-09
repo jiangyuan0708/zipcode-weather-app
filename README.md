@@ -15,26 +15,44 @@ https://github.com/jiangyuan0708/zipcode-weather-app.git
 
 builder the docer image for two services
 
-cd into zipcode_service folder, then run
-```
-docker build -t zipcode-service .
-```
-
 cd into weateher_service folder, then run
 ```
 docker build -t weather-service .
 ```
 
-now you will have two image created and let's run them
+then run the weather-service:
+```
+docker run -dp 3001:3001 weather-service
+```
+Now we weather-service deployed.
+To make two containers communicate with each other, let's use the default bridge network as they are in the same host.
+Now since we need zipcode service to call weather service, let's fetch the IP address of the zipcode container:
+
+copy the id of weather-service:
+<img width="978" alt="image" src="https://user-images.githubusercontent.com/124235505/217765014-38576307-275f-47d7-b5a5-db72d62a91d8.png">
+
+then run:
+```
+docker inspect 134a4351f800c45badf317c0206229808acc8910ef01fd5d47301fa599795d2c | grep IPAddress
+```
+
+![image](https://user-images.githubusercontent.com/124235505/217764635-71fcd04e-5f8d-49da-8efe-e86bd5a6a7f6.png)
+
+Now we paste the ip address to the app.py in zipcode service
+```
+response = requests.get(f"http://172.17.0.2:3001/weather/{zip}")
+```
+
+Now we can deploy the zipcode service:
+
+cd into zipcode_service folder, then run
+```
+docker build -t zipcode-service .
+```
 
 run the zipcode service: 
 ```
 docker run -dp 3000:3000 zipcode-service
-```
-
-run the weather service: 
-```
-docker run -dp 3001:3001 weather-service
 ```
 
 now your docker should looks like: 
@@ -61,10 +79,11 @@ Not found:
 
 ![image](https://user-images.githubusercontent.com/124235505/216268931-fd03c321-0097-4ef3-af9d-8ae525f82925.png)
 
-Now if you want to integrate those two service, please run the client.py:
+
+Now please run the client.py:
 ```
 python client.py
 ```
-
+it will call zipcode service, then zipcode service call weather service, and return the result
 the result looks like:
-![image](https://user-images.githubusercontent.com/124235505/216269245-3b80f874-ec2a-46ba-99f8-bb9e18b16641.png)
+![image](https://user-images.githubusercontent.com/124235505/217765771-48d3bebb-9ab6-4fd4-9264-2631622d0b39.png)
